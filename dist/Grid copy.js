@@ -1,4 +1,4 @@
-import { CellType } from "./types/CellType";
+import { CellType } from "./types/CellType.js";
 export class Grid {
     cols = 10;
     rows = 20;

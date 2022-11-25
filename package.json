@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc-esm",
     "dev": "concurrently --raw 'tsc --watch --preserveWatchOutput' 'es-dev-server --app-index index.html --node-resolve --watch --open'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@digitak/tsc-esm": "^3.1.4",
     "@types/hammerjs": "^2.0.41",
     "concurrently": "^7.5.0",
     "es-dev-server": "^2.1.0",

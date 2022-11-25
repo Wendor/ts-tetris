@@ -1,4 +1,4 @@
-import { CellType } from "./types/CellType";
+import { CellType } from "./types/CellType.js";
 export const shapes = [
     [
         [1, 1],

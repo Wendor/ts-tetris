@@ -1,5 +1,5 @@
-import { Shape } from './Shape';
-import { Grid } from './Grid';
+import { Shape } from './Shape.js';
+import { Grid } from './Grid.js';
 export class Game {
     grid = new Grid();
     speed = 500;
