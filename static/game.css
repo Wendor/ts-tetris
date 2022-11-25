@@ -1,0 +1,69 @@
+:root {
+  --border-color: #f2d3ab;
+  --background-color: #272744;
+  --block-color: #8b6d9c;
+  --block-color2: #494d7e;
+  --block-color3: #c69fa5;
+  --block-color4: #2f2f51;
+  --cell-size: 24px;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100%;
+  background-color: var(--background-color);
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+}
+
+.grid {
+  margin: 32px auto auto 32px;
+  padding: 1px;
+  display: inline-flex;
+  gap: 1px;
+  flex-direction: column;
+  background-color: var(--border-color);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 1px;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+}
+
+.type-0 {
+  background-color: var(--background-color);
+}
+
+.type-1 {
+  background-color: var(--block-color);
+}
+
+.type-2 {
+  background-color: var(--block-color2);
+  animation-name: blockfreeze;
+  animation-duration: .5s;
+}
+
+.type-3 {
+  background-color: var(--block-color4);
+}
+
+@keyframes blockfreeze {
+  0%   {background-color: var(--block-color);}
+  25%  {background-color: var(--block-color3);}
+  50%  {background-color: var(--block-color);}
+  100% {background-color: var(--block-color2);}
+}
+

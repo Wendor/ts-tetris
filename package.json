@@ -1,0 +1,22 @@
+{
+  "name": "tetris-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "concurrently --raw 'tsc --watch --preserveWatchOutput' 'es-dev-server --app-index index.html --node-resolve --watch --open'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/hammerjs": "^2.0.41",
+    "concurrently": "^7.5.0",
+    "es-dev-server": "^2.1.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "hammerjs": "^2.0.8"
+  }
+}
