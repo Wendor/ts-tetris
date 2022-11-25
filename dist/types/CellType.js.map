@@ -1,0 +1,1 @@
+{"version":3,"file":"CellType.js","sourceRoot":"","sources":["../../src/types/CellType.ts"],"names":[],"mappings":"AAAA,MAAM,CAAN,IAAY,QAKX;AALD,WAAY,QAAQ;IAClB,yCAAW,CAAA;IACX,yCAAW,CAAA;IACX,uCAAU,CAAA;IACV,2CAAY,CAAA;AACd,CAAC,EALW,QAAQ,KAAR,QAAQ,QAKnB;AAAA,CAAC","sourcesContent":["export enum CellType {\n  'empty' = 0,\n  'shape' = 1,\n  'wall' = 2,\n  'shadow' = 3,\n};\n"]}
