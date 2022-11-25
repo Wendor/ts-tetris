@@ -1,10 +1,10 @@
 :root {
-  --border-color: #f2d3ab;
-  --background-color: #272744;
-  --block-color: #8b6d9c;
-  --block-color2: #494d7e;
-  --block-color3: #c69fa5;
-  --block-color4: #2f2f51;
+  --border-color: #584563;
+  --background-color: #1f0e1c;
+  --block-color: #c0c741;
+  --block-color2: #7ec4c1;
+  --block-color3: #f5edba;
+  --block-color4: #3e2137;
   --cell-size: 24px;
 }
 
@@ -23,7 +23,7 @@ body {
 }
 
 .grid {
-  margin: 32px auto auto 32px;
+  margin: 32px auto auto auto;
   padding: 1px;
   display: inline-flex;
   gap: 1px;

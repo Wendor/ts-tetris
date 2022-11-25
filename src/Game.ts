@@ -1,5 +1,6 @@
 import { Shape } from './Shape';
 import { Grid } from './Grid';
+import { CellType } from './types/CellType';
 
 export class Game {
   private grid = new Grid();
@@ -26,6 +27,7 @@ export class Game {
     })
 
     document.addEventListener('touchend', e => {
+      if (this.gameOver) return;
       touchendX = e.changedTouches[0].screenX;
       touchendY = e.changedTouches[0].screenY;
 
@@ -55,6 +57,7 @@ export class Game {
     });
 
     document.addEventListener('keydown', (event) => {
+      if (this.gameOver) return;
       if (event.key == "ArrowRight") {
           this.shape.move({ x: 1, y: 0});
       }
@@ -78,7 +81,7 @@ export class Game {
       return;
     }
     if (!this.shape.canMove({ x: 0, y: 1})) {
-      this.shape.draw(2);
+      this.shape.draw(CellType.wall);
       this.shape = this.nextShape;
       this.nextShape = new Shape(this.grid);
       if (!this.shape.canMove({ x: 0, y: 0})) {

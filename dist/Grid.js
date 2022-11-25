@@ -51,7 +51,7 @@ export class Grid {
             if (!point)
                 break;
             const cell = document.querySelector(`#grid [data-x="${point.x}"][data-y="${point.y}"]`);
-            if (!point)
+            if (!cell)
                 break;
             cell.classList.value = 'cell';
             cell.classList.add(`type-${point.type}`);

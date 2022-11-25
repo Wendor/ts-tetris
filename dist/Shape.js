@@ -50,7 +50,7 @@ export class Shape {
         }
         this.draw(CellType.shape);
     }
-    draw(type = 1) {
+    draw(type = CellType.shape) {
         for (let j = 0; j < this.shape.length; j++) {
             for (let i = 0; i < this.shape[0].length; i++) {
                 if (this.shape[j][i]) {
@@ -74,7 +74,7 @@ export class Shape {
                 if (map[yCoord] == undefined || map[yCoord][xCoord] == undefined) {
                     return false;
                 }
-                if (shape[y][x] && map[yCoord] && map[yCoord][xCoord] == 2) {
+                if (shape[y][x] && map[yCoord] && map[yCoord][xCoord] == CellType.wall) {
                     return false;
                 }
             }

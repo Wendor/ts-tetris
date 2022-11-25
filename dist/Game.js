@@ -1,5 +1,6 @@
 import { Shape } from './Shape.js';
 import { Grid } from './Grid.js';
+import { CellType } from './types/CellType.js';
 export class Game {
     grid = new Grid();
     speed = 500;
@@ -21,6 +22,8 @@ export class Game {
             touchstartY = e.changedTouches[0].screenY;
         });
         document.addEventListener('touchend', e => {
+            if (this.gameOver)
+                return;
             touchendX = e.changedTouches[0].screenX;
             touchendY = e.changedTouches[0].screenY;
             const xDiff = touchendX - touchstartX;
@@ -44,6 +47,8 @@ export class Game {
             }
         });
         document.addEventListener('keydown', (event) => {
+            if (this.gameOver)
+                return;
             if (event.key == "ArrowRight") {
                 this.shape.move({ x: 1, y: 0 });
             }
@@ -63,7 +68,7 @@ export class Game {
             return;
         }
         if (!this.shape.canMove({ x: 0, y: 1 })) {
-            this.shape.draw(2);
+            this.shape.draw(CellType.wall);
             this.shape = this.nextShape;
             this.nextShape = new Shape(this.grid);
             if (!this.shape.canMove({ x: 0, y: 0 })) {
