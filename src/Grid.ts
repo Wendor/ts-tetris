@@ -10,6 +10,17 @@ export class Grid {
 
   constructor() {
     this.grid = document.getElementById('grid') as HTMLElement;
+    this.calcSize();
+    window.addEventListener('resize', () => this.calcSize());
+
+    this.map = (new Array(this.rows))
+      .fill([])
+      .map(() => (new Array(this.cols)).fill(0));
+
+    this.createDom();
+  }
+
+  private calcSize() {
     const root = document.documentElement;
 
     let size = Math.floor((root.scrollWidth - this.cols - 65) / this.cols);
@@ -17,12 +28,6 @@ export class Grid {
       size = Math.floor((root.scrollHeight  - this.rows - 65) / this.rows);
     }
     root.style.setProperty('--cell-size', size + 'px');
-
-    this.map = (new Array(this.rows))
-      .fill([])
-      .map(() => (new Array(this.cols)).fill(0));
-
-    this.createDom();
   }
 
   private createDom() {

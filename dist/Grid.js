@@ -7,16 +7,20 @@ export class Grid {
     queue = [];
     constructor() {
         this.grid = document.getElementById('grid');
+        this.calcSize();
+        window.addEventListener('resize', () => this.calcSize());
+        this.map = (new Array(this.rows))
+            .fill([])
+            .map(() => (new Array(this.cols)).fill(0));
+        this.createDom();
+    }
+    calcSize() {
         const root = document.documentElement;
         let size = Math.floor((root.scrollWidth - this.cols - 65) / this.cols);
         if (root.scrollHeight < size * this.rows + 65) {
             size = Math.floor((root.scrollHeight - this.rows - 65) / this.rows);
         }
         root.style.setProperty('--cell-size', size + 'px');
-        this.map = (new Array(this.rows))
-            .fill([])
-            .map(() => (new Array(this.cols)).fill(0));
-        this.createDom();
     }
     createDom() {
         for (let i = 0; i < this.rows; i++) {
