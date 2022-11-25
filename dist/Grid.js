@@ -8,13 +8,11 @@ export class Grid {
     constructor() {
         this.grid = document.getElementById('grid');
         const root = document.documentElement;
-        //root.style.setProperty('--cell-size', Math.floor((root.scrollHeight  - this.rows - 65) / this.rows) + 'px');
-        root.style.setProperty('--cell-size', Math.floor((root.scrollWidth - this.cols - 65) / this.cols) + 'px');
-        if (root.scrollWidth > root.scrollHeight) {
+        let size = Math.floor((root.scrollWidth - this.cols - 65) / this.cols);
+        if (root.scrollHeight < size * this.rows + 65) {
+            size = Math.floor((root.scrollHeight - this.rows - 65) / this.rows);
         }
-        else {
-            //root.style.setProperty('--cell-size', Math.floor((root.scrollHeight  - this.rows - 65) / this.rows) + 'px');
-        }
+        root.style.setProperty('--cell-size', size + 'px');
         this.map = (new Array(this.rows))
             .fill([])
             .map(() => (new Array(this.cols)).fill(0));

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc-esm",
-    "dev": "concurrently --raw 'tsc --watch --preserveWatchOutput' 'es-dev-server --app-index index.html --node-resolve --watch --open'"
+    "dev": "concurrently --raw 'tsc --watch --preserveWatchOutput' 'es-dev-server --app-index index.html --node-resolve --watch --open'",
+    "postdev": "npm run build"
   },
   "keywords": [],
   "author": "",
