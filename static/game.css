@@ -51,6 +51,10 @@ html, body {
   background-color: var(--border-color);
 }
 
+.grid.paused {
+  filter: blur(5px);
+}
+
 .row {
   display: flex;
   flex-direction: row;

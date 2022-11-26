@@ -15,6 +15,7 @@ export class Grid extends EventTarget {
         this.createDom();
     }
     createDom() {
+        this.grid.innerHTML = '';
         for (let i = 0; i < this.rows; i++) {
             const row = document.createElement('div');
             row.classList.add('row');

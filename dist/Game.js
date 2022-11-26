@@ -8,7 +8,7 @@ import { Tetramino } from './Tetramino.js';
 export class Game {
     glass = new Glass('grid');
     hint = new Grid('hint', 4, 4);
-    speed = 500;
+    speed = 1000;
     shape;
     hintShape;
     lastTickTime = 0;
@@ -67,8 +67,16 @@ export class Game {
         this.resetTickTime = true;
     }
     onTooglePause() {
-        if (this.gameOver)
+        if (this.gameOver) {
+            this.lines = 0;
+            this.score = 0;
+            this.glass = new Glass('grid');
+            this.newTetramino();
+            this.gameOver = false;
+            this.isPaused = false;
             return;
+        }
+        ;
         this.isPaused = !this.isPaused;
     }
     onPause() {
@@ -133,6 +141,12 @@ export class Game {
         window.requestAnimationFrame((t) => this.update(t));
     }
     updateTexts() {
+        if (this.gameOver || this.isPaused) {
+            this.glass.grid.classList.add('paused');
+        }
+        else {
+            this.glass.grid.classList.remove('paused');
+        }
         this.scoreDiv.innerHTML = `Score: ${this.score}`;
         this.linesDiv.innerHTML = `Lines: ${this.lines}`;
         if (this.gameOver) {
@@ -146,5 +160,5 @@ export class Game {
         this.statusDiv.innerHTML = 'playing';
     }
 }
-const game = new Game();
+let game = new Game();
 //# sourceMappingURL=Game.js.map

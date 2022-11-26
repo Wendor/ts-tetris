@@ -9,7 +9,7 @@ import { Tetramino } from './Tetramino';
 export class Game {
   private glass = new Glass('grid');
   private hint = new Grid('hint', 4, 4);
-  private speed = 500;
+  private speed = 1000;
   private shape: Shape;
   private hintShape: Tetramino;
   private lastTickTime = 0;
@@ -76,7 +76,15 @@ export class Game {
   }
 
   private onTooglePause() {
-    if (this.gameOver) return;
+    if (this.gameOver) {
+      this.lines = 0;
+      this.score = 0;
+      this.glass = new Glass('grid');
+      this.newTetramino();
+      this.gameOver = false;
+      this.isPaused = false;
+      return;
+    };
     this.isPaused = !this.isPaused;
   }
 
@@ -147,6 +155,11 @@ export class Game {
   }
 
   private updateTexts() {
+    if (this.gameOver || this.isPaused) {
+      this.glass.grid.classList.add('paused');
+    } else {
+      this.glass.grid.classList.remove('paused');
+    }
     this.scoreDiv!.innerHTML = `Score: ${this.score}`;
     this.linesDiv!.innerHTML = `Lines: ${this.lines}`;
     if (this.gameOver) {
@@ -161,4 +174,4 @@ export class Game {
   }
 }
 
-const game = new Game();
+let game = new Game();
