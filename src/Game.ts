@@ -157,8 +157,10 @@ export class Game {
   private updateTexts() {
     if (this.gameOver || this.isPaused) {
       this.glass.grid.classList.add('paused');
+      this.hint.grid.classList.add('paused');
     } else {
       this.glass.grid.classList.remove('paused');
+      this.hint.grid.classList.remove('paused');
     }
     this.scoreDiv!.innerHTML = `Score: ${this.score}`;
     this.linesDiv!.innerHTML = `Lines: ${this.lines}`;
