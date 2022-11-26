@@ -2,16 +2,26 @@ export class TouchInput extends EventTarget {
   private touchstartX = 0;
   private touchstartY = 0;
   private isMoving = false;
+  private ignoreCurrent = false;
   private step: number = 24;
+  private timeout = setTimeout(() => null, 0);
 
   constructor() {
     super();
     document.addEventListener('touchstart', (e) => this.touchStart(e))
     document.addEventListener('touchend', (e) => this.touchEnd(e));
     document.addEventListener('touchmove', (e) => this.touchMove(e));
+    document.addEventListener('touchcancel', (e) => this.touchCancel(e));
   }
 
   private touchStart(e: TouchEvent) {
+    this.ignoreCurrent = false;
+    this.timeout = setTimeout(() => {
+      if (!this.isMoving) {
+        this.dispatchEvent(new Event('tooglePause'));
+        this.ignoreCurrent = true;
+      }
+    }, 1000);
     const cell = document.querySelector('.cell');
     if (cell) {
       this.step = cell.clientWidth;
@@ -22,13 +32,21 @@ export class TouchInput extends EventTarget {
   }
 
   private touchEnd(e: TouchEvent) {
+    clearTimeout(this.timeout);
+    if (this.ignoreCurrent) return;
     if (!this.isMoving) {
       this.dispatchEvent(new Event('rotate'));
       return;
     }
   }
 
+  private touchCancel(e: TouchEvent) {
+    clearTimeout(this.timeout);
+  }
+
   private touchMove(e: TouchEvent) {
+    if (this.ignoreCurrent) return;
+
     const touchendX = e.changedTouches[0].screenX;
     const touchendY = e.changedTouches[0].screenY;
 

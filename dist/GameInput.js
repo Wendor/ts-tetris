@@ -8,6 +8,8 @@ export class GameInput extends EventTarget {
         'moveLeft',
         'moveRight',
         'moveDown',
+        'tooglePause',
+        'pause',
     ];
     constructor() {
         super();
@@ -18,6 +20,9 @@ export class GameInput extends EventTarget {
                 input.addEventListener(event, () => this.dispatchEvent(new Event(event)));
             }
         }
+        window.onblur = () => {
+            this.dispatchEvent(new Event('pause'));
+        };
     }
 }
 //# sourceMappingURL=GameInput.js.map

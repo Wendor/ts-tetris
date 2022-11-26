@@ -1,4 +1,3 @@
-import { Grid } from './Grid';
 import { Keyboard } from './inputs/Keyboard';
 import { TouchInput } from './inputs/TouchInput';
 
@@ -10,6 +9,8 @@ export class GameInput extends EventTarget {
     'moveLeft',
     'moveRight',
     'moveDown',
+    'tooglePause',
+    'pause',
   ];
 
   constructor() {
@@ -21,6 +22,10 @@ export class GameInput extends EventTarget {
       for (let event of this.events) {
         input.addEventListener(event, () => this.dispatchEvent(new Event(event)));
       }
+    }
+
+    window.onblur = () => {
+      this.dispatchEvent(new Event('pause'));
     }
   }
 }

@@ -16,6 +16,9 @@ export class Keyboard extends EventTarget {
         if (event.key == "ArrowDown") {
             this.dispatchEvent(new Event('moveDown'));
         }
+        if (event.key == " ") {
+            this.dispatchEvent(new Event('tooglePause'));
+        }
     }
 }
 //# sourceMappingURL=Keyboard.js.map

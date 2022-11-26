@@ -41,13 +41,18 @@ export class Glass extends Grid {
     }
   }
 
-  public hideRows() {
+  public hideLines() {
+    let hidedLines = 0;
     for (let y in this.map) {
       const row = this.map[y];
       const walls = row.filter((c) => c == CellType.wall).length;
       if (row.length == walls) {
+        hidedLines += 1;
         this.moveDown(parseInt(y));
       }
+    }
+    if (hidedLines) {
+      this.dispatchEvent(new CustomEvent('score', { detail: hidedLines }), );
     }
   }
 

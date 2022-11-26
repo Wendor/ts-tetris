@@ -1,6 +1,6 @@
 import { Point } from './types/Point';
 
-export class Grid {
+export class Grid extends EventTarget {
   public cols: number = 10;
   public rows: number = 20;
   public grid: HTMLElement;
@@ -8,6 +8,7 @@ export class Grid {
   public queue: Point[] = [];
 
   constructor(el: string, cols = 10, rows = 20) {
+    super();
     this.cols = cols;
     this.rows = rows;
     this.grid = document.getElementById(el) as HTMLElement;

@@ -88,3 +88,8 @@ html, body {
   100% {background-color: var(--block-color2);}
 }
 
+.help {
+  position: absolute;
+  bottom: 1rem;
+  color: var(--block-color3)
+}

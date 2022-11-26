@@ -1,10 +1,11 @@
-export class Grid {
+export class Grid extends EventTarget {
     cols = 10;
     rows = 20;
     grid;
     map;
     queue = [];
     constructor(el, cols = 10, rows = 20) {
+        super();
         this.cols = cols;
         this.rows = rows;
         this.grid = document.getElementById(el);
