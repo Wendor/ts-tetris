@@ -1,29 +1,31 @@
 import { Shape } from './Shape.js';
 import { Grid } from './Grid.js';
 import { CellType } from './types/CellType.js';
-import { Keyboard } from './input/Keyboard.js';
-import { Touch } from './input/Touch.js';
+import { GameInput } from './GameInput.js';
+import { SevenBag } from './generators/SevenBag.js';
 export class Game {
     grid = new Grid();
     speed = 500;
-    shape = new Shape(this.grid);
-    nextShape = new Shape(this.grid);
+    shape;
     lastTickTime = 0;
     resetTickTime = false;
     gameOver = false;
+    tetraminoQueue = [];
+    generator = new SevenBag();
     constructor() {
-        this.initControls();
+        this.shape = new Shape(this.grid, this.generator.get());
+        this.tetraminoQueue = (new Array(4))
+            .fill([])
+            .map(() => this.generator.get());
+        this.initInput();
         window.requestAnimationFrame((t) => this.update(t));
     }
-    initControls() {
-        const keyboard = new Keyboard();
-        const touch = new Touch(this.grid);
-        for (const input of [keyboard, touch]) {
-            input.addEventListener('rotate', () => this.onRotate());
-            input.addEventListener('moveLeft', () => this.onMoveLeft());
-            input.addEventListener('moveRight', () => this.onMoveRight());
-            input.addEventListener('moveDown', () => this.onMoveDown());
-        }
+    initInput() {
+        const input = new GameInput(this.grid);
+        input.addEventListener('rotate', () => this.onRotate());
+        input.addEventListener('moveLeft', () => this.onMoveLeft());
+        input.addEventListener('moveRight', () => this.onMoveRight());
+        input.addEventListener('moveDown', () => this.onMoveDown());
     }
     onRotate() {
         if (this.gameOver)
@@ -47,14 +49,22 @@ export class Game {
         this.shape.moveDown();
         this.resetTickTime = true;
     }
+    newTetramino() {
+        const tetramino = this.tetraminoQueue.shift();
+        if (!tetramino)
+            throw new Error('unknown error');
+        if (this.shape) {
+            this.shape.draw(CellType.wall);
+        }
+        this.shape = new Shape(this.grid, tetramino);
+        this.tetraminoQueue.push(this.generator.get());
+    }
     tick() {
         if (this.gameOver) {
             return;
         }
         if (!this.shape.canMove({ x: 0, y: 1 })) {
-            this.shape.draw(CellType.wall);
-            this.shape = this.nextShape;
-            this.nextShape = new Shape(this.grid);
+            this.newTetramino();
             if (!this.shape.canMove({ x: 0, y: 0 })) {
                 this.gameOver = true;
             }

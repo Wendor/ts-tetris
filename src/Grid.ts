@@ -1,5 +1,5 @@
-import { CellType } from "./types/CellType";
-import { Point } from "./types/Point";
+import { CellType } from './types/CellType';
+import { Point } from './types/Point';
 
 export class Grid {
   public cols: number = 10;

@@ -1,54 +1,69 @@
 import { Shape } from './Shape';
 import { Grid } from './Grid';
 import { CellType } from './types/CellType';
-import { Keyboard } from './input/Keyboard';
-import { Touch } from './input/Touch';
+import { GameInput } from './GameInput';
+import { SevenBag } from './generators/SevenBag';
 
 export class Game {
   private grid = new Grid();
   private speed = 500;
-  private shape = new Shape(this.grid);
-  private nextShape = new Shape(this.grid);
+  private shape: Shape;
   private lastTickTime = 0;
   private resetTickTime = false;
   public gameOver = false;
+  public tetraminoQueue: number[][][] = [];
+  public generator = new SevenBag();
 
   constructor() {
-    this.initControls();
+    this.shape = new Shape(this.grid, this.generator.get());
+    this.tetraminoQueue = (new Array(4))
+      .fill([])
+      .map(() => this.generator.get());
+
+    this.initInput();
     window.requestAnimationFrame((t) => this.update(t));
   }
 
-  private initControls() {
-    const keyboard = new Keyboard();
-    const touch = new Touch(this.grid);
-    for (const input of [keyboard, touch]) {
-      input.addEventListener('rotate', () => this.onRotate());
-      input.addEventListener('moveLeft', () => this.onMoveLeft());
-      input.addEventListener('moveRight', () => this.onMoveRight());
-      input.addEventListener('moveDown', () => this.onMoveDown());
-    }
+  private initInput() {
+    const input = new GameInput(this.grid);
+    input.addEventListener('rotate', () => this.onRotate());
+    input.addEventListener('moveLeft', () => this.onMoveLeft());
+    input.addEventListener('moveRight', () => this.onMoveRight());
+    input.addEventListener('moveDown', () => this.onMoveDown());
   }
 
-  onRotate() {
+  private onRotate() {
     if (this.gameOver) return;
     this.shape.rotate();
     this.resetTickTime = true;
   }
 
-  onMoveLeft() {
+  private onMoveLeft() {
     if (this.gameOver) return;
     this.shape.move({ x: -1, y: 0});
   }
 
-  onMoveRight() {
+  private onMoveRight() {
     if (this.gameOver) return;
     this.shape.move({ x: 1, y: 0});
   }
 
-  onMoveDown() {
+  private onMoveDown() {
     if (this.gameOver) return;
     this.shape.moveDown();
     this.resetTickTime = true;
+  }
+
+  private newTetramino() {
+    const tetramino = this.tetraminoQueue.shift();
+    if (!tetramino) throw new Error('unknown error');
+
+    if (this.shape) {
+      this.shape.draw(CellType.wall);
+    }
+
+    this.shape = new Shape(this.grid, tetramino);
+    this.tetraminoQueue.push(this.generator.get());
   }
 
   private tick() {
@@ -56,9 +71,7 @@ export class Game {
       return;
     }
     if (!this.shape.canMove({ x: 0, y: 1})) {
-      this.shape.draw(CellType.wall);
-      this.shape = this.nextShape;
-      this.nextShape = new Shape(this.grid);
+      this.newTetramino();
       if (!this.shape.canMove({ x: 0, y: 0})) {
         this.gameOver = true;
       }

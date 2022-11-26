@@ -1,11 +1,9 @@
-import { Grid } from "../Grid";
+import { Grid } from '../Grid';
 
-export class Touch extends EventTarget {
+export class TouchInput extends EventTarget {
   private grid: Grid;
   private touchstartX = 0;
-  private touchendX = 0;
   private touchstartY = 0;
-  private touchendY = 0;
   private isMoving = false;
 
   constructor(grid: Grid) {

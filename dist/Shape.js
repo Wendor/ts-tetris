@@ -1,46 +1,13 @@
-import { CellType } from "./types/CellType.js";
-export const shapes = [
-    [
-        [1, 1],
-        [1, 1],
-    ],
-    [
-        [1, 1, 1, 1],
-    ],
-    [
-        [1, 1, 0],
-        [0, 1, 1],
-    ],
-    [
-        [1, 1, 1],
-        [0, 0, 1],
-    ],
-    [
-        [0, 1, 0],
-        [1, 1, 1],
-    ],
-];
+import { CellType } from './types/CellType.js';
 export class Shape {
     x;
     y;
     grid;
     shape;
-    constructor(grid, shape = undefined) {
+    constructor(grid, shape) {
         this.grid = grid;
-        if (shape) {
-            this.shape = shape;
-        }
-        else {
-            this.shape = shapes[Math.floor(Math.random() * shapes.length)];
-            if (Math.random() > 0.5) {
-                this.shape = this.shape.reverse();
-            }
-            const rotateTimes = Math.floor(Math.random() * 4);
-            for (let i = 0; i < rotateTimes; i++) {
-                this.shape = this.rotatedShape();
-            }
-        }
-        this.x = Math.floor(grid.cols / 2) - Math.floor(this.shape[0].length / 2);
+        this.shape = shape;
+        this.x = Math.ceil(grid.cols / 2) - Math.ceil(this.shape[0].length / 2);
         this.y = 0;
     }
     tick() {
@@ -71,6 +38,9 @@ export class Shape {
             for (let x in shape[y]) {
                 const yCoord = parseInt(y) + this.y + offset.y;
                 const xCoord = parseInt(x) + this.x + offset.x;
+                if (shape[y][x] == 0) {
+                    continue;
+                }
                 if (map[yCoord] == undefined || map[yCoord][xCoord] == undefined) {
                     return false;
                 }
