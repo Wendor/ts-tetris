@@ -19,7 +19,7 @@ html, body {
 }
 
 .game {
-  aspect-ratio: 0.5;
+  aspect-ratio: 0.46;
   height: 100%;
   display: flex;
   gap: 1rem;
