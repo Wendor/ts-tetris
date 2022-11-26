@@ -1,67 +1,51 @@
 import { Shape } from './Shape.js';
 import { Grid } from './Grid.js';
 import { CellType } from './types/CellType.js';
+import { Keyboard } from './input/Keyboard.js';
+import { Touch } from './input/Touch.js';
 export class Game {
     grid = new Grid();
     speed = 500;
     shape = new Shape(this.grid);
     nextShape = new Shape(this.grid);
     lastTickTime = 0;
+    resetTickTime = false;
     gameOver = false;
     constructor() {
         this.initControls();
         window.requestAnimationFrame((t) => this.update(t));
     }
     initControls() {
-        let touchstartX = 0;
-        let touchendX = 0;
-        let touchstartY = 0;
-        let touchendY = 0;
-        document.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX;
-            touchstartY = e.changedTouches[0].screenY;
-        });
-        document.addEventListener('touchend', e => {
-            if (this.gameOver)
-                return;
-            touchendX = e.changedTouches[0].screenX;
-            touchendY = e.changedTouches[0].screenY;
-            const xDiff = touchendX - touchstartX;
-            const yDiff = touchendY - touchstartY;
-            const vertical = Math.abs(yDiff) > Math.abs(xDiff);
-            const diff = vertical ? yDiff : xDiff;
-            if (Math.abs(diff) < 10) {
-                this.shape.rotate();
-                return;
-            }
-            if (!vertical && xDiff < 0) {
-                this.shape.move({ x: -1, y: 0 });
-                return;
-            }
-            if (!vertical && xDiff > 0) {
-                this.shape.move({ x: 1, y: 0 });
-                return;
-            }
-            if (vertical && yDiff > 0) {
-                this.shape.moveDown();
-            }
-        });
-        document.addEventListener('keydown', (event) => {
-            if (this.gameOver)
-                return;
-            if (event.key == "ArrowRight") {
-                this.shape.move({ x: 1, y: 0 });
-            }
-            if (event.key == "ArrowLeft") {
-                this.shape.move({ x: -1, y: 0 });
-            }
-            if (event.key == "ArrowUp") {
-                this.shape.rotate();
-            }
-            if (event.key == "ArrowDown") {
-                this.shape.moveDown();
-            }
-        });
+        const keyboard = new Keyboard();
+        const touch = new Touch(this.grid);
+        for (const input of [keyboard, touch]) {
+            input.addEventListener('rotate', () => this.onRotate());
+            input.addEventListener('moveLeft', () => this.onMoveLeft());
+            input.addEventListener('moveRight', () => this.onMoveRight());
+            input.addEventListener('moveDown', () => this.onMoveDown());
+        }
+    }
+    onRotate() {
+        if (this.gameOver)
+            return;
+        this.shape.rotate();
+        this.resetTickTime = true;
+    }
+    onMoveLeft() {
+        if (this.gameOver)
+            return;
+        this.shape.move({ x: -1, y: 0 });
+    }
+    onMoveRight() {
+        if (this.gameOver)
+            return;
+        this.shape.move({ x: 1, y: 0 });
+    }
+    onMoveDown() {
+        if (this.gameOver)
+            return;
+        this.shape.moveDown();
+        this.resetTickTime = true;
     }
     tick() {
         if (this.gameOver) {
@@ -80,6 +64,10 @@ export class Game {
         this.grid.hideRows();
     }
     update(timestamp) {
+        if (this.resetTickTime) {
+            this.lastTickTime = timestamp;
+            this.resetTickTime = false;
+        }
         if (timestamp - this.lastTickTime > this.speed) {
             this.lastTickTime = timestamp;
             this.tick();

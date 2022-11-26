@@ -5,6 +5,7 @@ export class Grid {
     grid;
     map;
     queue = [];
+    blockSize = 24;
     constructor() {
         this.grid = document.getElementById('grid');
         this.calcSize();
@@ -21,6 +22,7 @@ export class Grid {
             size = Math.floor((root.scrollHeight - this.rows - 65) / this.rows);
         }
         root.style.setProperty('--cell-size', size + 'px');
+        this.blockSize = size;
     }
     createDom() {
         for (let i = 0; i < this.rows; i++) {

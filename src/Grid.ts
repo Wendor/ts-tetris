@@ -7,6 +7,7 @@ export class Grid {
   public grid: HTMLElement;
   public map: number[][];
   public queue: Point[] = [];
+  public blockSize = 24;
 
   constructor() {
     this.grid = document.getElementById('grid') as HTMLElement;
@@ -28,6 +29,7 @@ export class Grid {
       size = Math.floor((root.scrollHeight  - this.rows - 65) / this.rows);
     }
     root.style.setProperty('--cell-size', size + 'px');
+    this.blockSize = size;
   }
 
   private createDom() {

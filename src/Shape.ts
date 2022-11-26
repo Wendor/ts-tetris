@@ -102,13 +102,14 @@ export class Shape {
   }
 
   public moveDown() {
+    let offset = 0;
     for (let y = 0; y < this.grid.getMap().length - 1; y++) {
-      if (this.canMove({x: 0, y })) {
-        this.move({ x: 0, y });
-      } else {
+      if (!this.canMove({ x: 0, y })) {
         break;
       }
+      offset = y;
     }
+    this.move({ x: 0, y: offset });
   }
 
   public rotate() {
