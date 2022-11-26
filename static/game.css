@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Marker+Hatch&display=swap');
+
 :root {
   --background-color: #1f0e1c;
   --border-color: #584563;
@@ -6,6 +8,10 @@
   --block-color3: #f5edba;
   --block-color4: #3e2137;
   --cell-size: 24px;
+}
+
+* {
+  user-select: none;
 }
 
 html, body {
@@ -96,6 +102,7 @@ html, body {
 }
 
 .help {
+  font-family: 'Rubik Marker Hatch', cursive;
   position: absolute;
   bottom: 1rem;
   color: var(--block-color3)
