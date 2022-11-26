@@ -8,7 +8,7 @@ import { Tetramino } from './Tetramino.js';
 export class Game {
     glass = new Glass('grid');
     hint = new Grid('hint', 4, 4);
-    speed = 1000;
+    speed = 500;
     shape;
     hintShape;
     lastTickTime = 0;

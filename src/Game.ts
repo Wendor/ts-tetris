@@ -9,7 +9,7 @@ import { Tetramino } from './Tetramino';
 export class Game {
   private glass = new Glass('grid');
   private hint = new Grid('hint', 4, 4);
-  private speed = 1000;
+  private speed = 500;
   private shape: Shape;
   private hintShape: Tetramino;
   private lastTickTime = 0;
