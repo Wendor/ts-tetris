@@ -1,40 +1,13 @@
-import { Grid } from 'Grid';
+import { Tetramino } from './Tetramino';
 import { CellType } from './types/CellType';
 
-export class Shape {
-  public x: number;
-  public y: number;
-  public grid: Grid;
-  public shape: number[][];
-
-  constructor(grid: Grid, shape: number[][]) {
-    this.grid = grid;
-    this.shape = shape;
-
-    this.x = Math.ceil(grid.cols/2) - Math.ceil(this.shape[0].length / 2);
-    this.y = 0;
-  }
-
+export class Shape extends Tetramino {
   public tick() {
     this.draw(CellType.empty);
     if (this.canMove({ x: 0, y: 1})) {
       this.y += 1;
     }
     this.draw(CellType.shape);
-  }
-
-  public draw(type = CellType.shape) {
-    for (let j = 0; j < this.shape.length; j++) {
-      for (let i = 0; i < this.shape[0].length; i++) {
-        if (this.shape[j][i]) {
-          this.grid.addQueue({
-            y: this.y + j,
-            x: this.x + i,
-            type: type,
-          });
-        }
-      }
-    }
   }
 
   public canMove(offset: { x: number; y: number }, shape: number[][] | undefined = undefined) {
@@ -91,9 +64,5 @@ export class Shape {
     return this.shape[0].map((row, idx) => {
       return this.shape.map((r) => r[idx]).reverse();
     });
-  }
-
-  update() {
-
   }
 }

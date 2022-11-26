@@ -1,4 +1,3 @@
-import { CellType } from './types/CellType';
 import { Point } from './types/Point';
 
 export class Grid {
@@ -7,29 +6,17 @@ export class Grid {
   public grid: HTMLElement;
   public map: number[][];
   public queue: Point[] = [];
-  public blockSize = 24;
 
-  constructor() {
-    this.grid = document.getElementById('grid') as HTMLElement;
-    this.calcSize();
-    window.addEventListener('resize', () => this.calcSize());
+  constructor(el: string, cols = 10, rows = 20) {
+    this.cols = cols;
+    this.rows = rows;
+    this.grid = document.getElementById(el) as HTMLElement;
 
     this.map = (new Array(this.rows))
       .fill([])
       .map(() => (new Array(this.cols)).fill(0));
 
     this.createDom();
-  }
-
-  private calcSize() {
-    const root = document.documentElement;
-
-    let size = Math.floor((root.scrollWidth - this.cols - 65) / this.cols);
-    if (root.scrollHeight < size * this.rows + 65) {
-      size = Math.floor((root.scrollHeight  - this.rows - 65) / this.rows);
-    }
-    root.style.setProperty('--cell-size', size + 'px');
-    this.blockSize = size;
   }
 
   private createDom() {
@@ -64,7 +51,7 @@ export class Grid {
       const point = this.queue.shift();
       if (!point) break;
 
-      const cell = document.querySelector(`#grid [data-x="${point.x}"][data-y="${point.y}"]`) as HTMLElement;
+      const cell = document.querySelector(`#${this.grid.id} [data-x="${point.x}"][data-y="${point.y}"]`) as HTMLElement;
       if (!cell) break;
 
       cell.classList.value = 'cell';
@@ -73,66 +60,11 @@ export class Grid {
   }
 
   public addQueue(point: Point) {
-    if (this.map[point.y][point.x] == CellType.shape && point.type !== CellType.shape) {
-      this.removeShadow(point);
-    }
     this.map[point.y][point.x] = point.type;
     this.queue.push(point);
-
-    if (point.type == CellType.shape) {
-      this.addShadow(point);
-    }
-  }
-
-  public addShadow(point: Point) {
-    for (let y = point.y+1; y < this.rows; y++) {
-      if (this.map[y][point.x] != CellType.empty) {
-        break;
-      }
-      this.addQueue({
-        x: point.x,
-        y,
-        type: CellType.shadow,
-      });
-    }
-  }
-
-  public removeShadow(point: Point) {
-    for (let y = point.y+1; y < this.rows; y++) {
-      if (this.map[y][point.x] != CellType.shadow) {
-        break;
-      }
-      this.addQueue({
-        x: point.x,
-        y,
-        type: CellType.empty,
-      });
-    }
   }
 
   public getMap() {
     return this.map;
-  }
-
-  public hideRows() {
-    for (let y in this.map) {
-      const row = this.map[y];
-      const walls = row.filter((c) => c == CellType.wall).length;
-      if (row.length == walls) {
-        this.moveDown(parseInt(y));
-      }
-    }
-  }
-
-  private moveDown(targetY: number) {
-    for (let y = targetY; y > 0; y--) {
-      for (let x = 0; x < this.map[0].length; x++) {
-        const type = this.map[y-1][x] == CellType.shape
-          ? CellType.empty
-          : this.map[y-1][x];
-
-        this.addQueue({ x, y, type });
-      }
-    }
   }
 }

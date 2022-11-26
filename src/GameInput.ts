@@ -3,7 +3,6 @@ import { Keyboard } from './inputs/Keyboard';
 import { TouchInput } from './inputs/TouchInput';
 
 export class GameInput extends EventTarget {
-  private grid: Grid;
   private keyboard: Keyboard;
   private touch: TouchInput;
   private events = [
@@ -13,11 +12,10 @@ export class GameInput extends EventTarget {
     'moveDown',
   ];
 
-  constructor(grid: Grid) {
+  constructor() {
     super();
-    this.grid = grid;
     this.keyboard = new Keyboard();
-    this.touch = new TouchInput(this.grid);
+    this.touch = new TouchInput();
 
     for (let input of [this.keyboard, this.touch]) {
       for (let event of this.events) {

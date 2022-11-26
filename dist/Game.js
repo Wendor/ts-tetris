@@ -3,10 +3,14 @@ import { Grid } from './Grid.js';
 import { CellType } from './types/CellType.js';
 import { GameInput } from './GameInput.js';
 import { SevenBag } from './generators/SevenBag.js';
+import { Glass } from './Glass.js';
+import { Tetramino } from './Tetramino.js';
 export class Game {
-    grid = new Grid();
+    grid = new Glass('grid');
+    hint = new Grid('hint', 4, 4);
     speed = 500;
     shape;
+    hintShape;
     lastTickTime = 0;
     resetTickTime = false;
     gameOver = false;
@@ -17,11 +21,12 @@ export class Game {
         this.tetraminoQueue = (new Array(4))
             .fill([])
             .map(() => this.generator.get());
+        this.hintShape = new Tetramino(this.hint, this.tetraminoQueue[0], 'middle');
         this.initInput();
         window.requestAnimationFrame((t) => this.update(t));
     }
     initInput() {
-        const input = new GameInput(this.grid);
+        const input = new GameInput();
         input.addEventListener('rotate', () => this.onRotate());
         input.addEventListener('moveLeft', () => this.onMoveLeft());
         input.addEventListener('moveRight', () => this.onMoveRight());
@@ -56,7 +61,11 @@ export class Game {
         if (this.shape) {
             this.shape.draw(CellType.wall);
         }
+        if (this.hintShape) {
+            this.hintShape.undraw();
+        }
         this.shape = new Shape(this.grid, tetramino);
+        this.hintShape = new Tetramino(this.hint, this.tetraminoQueue[0], 'middle');
         this.tetraminoQueue.push(this.generator.get());
     }
     tick() {
@@ -69,6 +78,7 @@ export class Game {
                 this.gameOver = true;
             }
             this.shape.draw();
+            this.hintShape.draw();
         }
         this.shape.tick();
         this.grid.hideRows();
@@ -83,8 +93,10 @@ export class Game {
             this.tick();
         }
         this.shape.draw();
+        this.hintShape.draw();
         this.grid.update();
-        this.shape.update();
+        this.hint.update();
+        ;
         window.requestAnimationFrame((t) => this.update(t));
     }
 }

@@ -1,20 +1,21 @@
-import { Grid } from '../Grid';
-
 export class TouchInput extends EventTarget {
-  private grid: Grid;
   private touchstartX = 0;
   private touchstartY = 0;
   private isMoving = false;
+  private step: number = 24;
 
-  constructor(grid: Grid) {
+  constructor() {
     super();
-    this.grid = grid;
     document.addEventListener('touchstart', (e) => this.touchStart(e))
     document.addEventListener('touchend', (e) => this.touchEnd(e));
     document.addEventListener('touchmove', (e) => this.touchMove(e));
   }
 
   private touchStart(e: TouchEvent) {
+    const cell = document.querySelector('.cell');
+    if (cell) {
+      this.step = cell.clientWidth;
+    }
     this.touchstartX = e.changedTouches[0].screenX;
     this.touchstartY = e.changedTouches[0].screenY;
     this.isMoving = false;
@@ -36,7 +37,7 @@ export class TouchInput extends EventTarget {
     const horisontal = Math.abs(yDiff) < Math.abs(xDiff);
     const diff = horisontal ? xDiff : yDiff;
 
-    if (Math.abs(diff) < this.grid.blockSize) {
+    if (Math.abs(diff) < this.step) {
       return;
     }
 

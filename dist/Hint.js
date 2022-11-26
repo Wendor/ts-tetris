@@ -1,15 +1,15 @@
 import { CellType } from './types/CellType.js';
-export class Grid {
-    cols = 10;
-    rows = 20;
+export class Hint {
+    cols = 6;
+    rows = 18;
     grid;
     map;
     queue = [];
     blockSize = 24;
     constructor(el) {
         this.grid = document.getElementById(el);
-        this.calcSize();
-        window.addEventListener('resize', () => this.calcSize());
+        //this.calcSize();
+        //window.addEventListener('resize', () => this.calcSize());
         this.map = (new Array(this.rows))
             .fill([])
             .map(() => (new Array(this.cols)).fill(0));
@@ -52,7 +52,7 @@ export class Grid {
             const point = this.queue.shift();
             if (!point)
                 break;
-            const cell = document.querySelector(`#grid [data-x="${point.x}"][data-y="${point.y}"]`);
+            const cell = document.querySelector(`#${this.grid.id} [data-x="${point.x}"][data-y="${point.y}"]`);
             if (!cell)
                 break;
             cell.classList.value = 'cell';
@@ -116,4 +116,4 @@ export class Grid {
         }
     }
 }
-//# sourceMappingURL=Grid%20copy.js.map
+//# sourceMappingURL=Hint.js.map

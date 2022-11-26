@@ -1,34 +1,12 @@
+import { Tetramino } from './Tetramino.js';
 import { CellType } from './types/CellType.js';
-export class Shape {
-    x;
-    y;
-    grid;
-    shape;
-    constructor(grid, shape) {
-        this.grid = grid;
-        this.shape = shape;
-        this.x = Math.ceil(grid.cols / 2) - Math.ceil(this.shape[0].length / 2);
-        this.y = 0;
-    }
+export class Shape extends Tetramino {
     tick() {
         this.draw(CellType.empty);
         if (this.canMove({ x: 0, y: 1 })) {
             this.y += 1;
         }
         this.draw(CellType.shape);
-    }
-    draw(type = CellType.shape) {
-        for (let j = 0; j < this.shape.length; j++) {
-            for (let i = 0; i < this.shape[0].length; i++) {
-                if (this.shape[j][i]) {
-                    this.grid.addQueue({
-                        y: this.y + j,
-                        x: this.x + i,
-                        type: type,
-                    });
-                }
-            }
-        }
     }
     canMove(offset, shape = undefined) {
         const map = this.grid.getMap();
@@ -81,8 +59,6 @@ export class Shape {
         return this.shape[0].map((row, idx) => {
             return this.shape.map((r) => r[idx]).reverse();
         });
-    }
-    update() {
     }
 }
 //# sourceMappingURL=Shape.js.map

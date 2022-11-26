@@ -3,11 +3,15 @@ import { Grid } from './Grid';
 import { CellType } from './types/CellType';
 import { GameInput } from './GameInput';
 import { SevenBag } from './generators/SevenBag';
+import { Glass } from './Glass';
+import { Tetramino } from './Tetramino';
 
 export class Game {
-  private grid = new Grid();
+  private grid = new Glass('grid');
+  private hint = new Grid('hint', 4, 4);
   private speed = 500;
   private shape: Shape;
+  private hintShape: Tetramino;
   private lastTickTime = 0;
   private resetTickTime = false;
   public gameOver = false;
@@ -20,12 +24,14 @@ export class Game {
       .fill([])
       .map(() => this.generator.get());
 
+    this.hintShape = new Tetramino(this.hint, this.tetraminoQueue[0], 'middle');
+
     this.initInput();
     window.requestAnimationFrame((t) => this.update(t));
   }
 
   private initInput() {
-    const input = new GameInput(this.grid);
+    const input = new GameInput();
     input.addEventListener('rotate', () => this.onRotate());
     input.addEventListener('moveLeft', () => this.onMoveLeft());
     input.addEventListener('moveRight', () => this.onMoveRight());
@@ -62,7 +68,12 @@ export class Game {
       this.shape.draw(CellType.wall);
     }
 
+    if (this.hintShape) {
+      this.hintShape.undraw();
+    }
+
     this.shape = new Shape(this.grid, tetramino);
+    this.hintShape = new Tetramino(this.hint, this.tetraminoQueue[0], 'middle');
     this.tetraminoQueue.push(this.generator.get());
   }
 
@@ -76,6 +87,7 @@ export class Game {
         this.gameOver = true;
       }
       this.shape.draw();
+      this.hintShape.draw();
     }
     this.shape.tick();
     this.grid.hideRows();
@@ -91,9 +103,10 @@ export class Game {
       this.tick();
     }
     this.shape.draw();
+    this.hintShape.draw();
 
     this.grid.update();
-    this.shape.update();
+    this.hint.update();;
     window.requestAnimationFrame((t) => this.update(t));
   }
 }
