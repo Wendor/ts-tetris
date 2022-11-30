@@ -1,13 +1,15 @@
 export class Grid extends EventTarget {
     cols = 10;
     rows = 20;
+    offset = 0;
     grid;
     map;
     queue = [];
-    constructor(el, cols = 10, rows = 20) {
+    constructor(el, cols = 10, rows = 20, offset = 0) {
         super();
         this.cols = cols;
         this.rows = rows;
+        this.offset = offset;
         this.grid = document.getElementById(el);
         this.map = (new Array(this.rows))
             .fill([])
@@ -16,7 +18,7 @@ export class Grid extends EventTarget {
     }
     createDom() {
         this.grid.innerHTML = '';
-        for (let i = 0; i < this.rows; i++) {
+        for (let i = this.offset; i < this.rows; i++) {
             const row = document.createElement('div');
             row.classList.add('row');
             for (let j = 0; j < this.cols; j++) {

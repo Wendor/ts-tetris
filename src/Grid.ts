@@ -3,14 +3,16 @@ import { Point } from './types/Point';
 export class Grid extends EventTarget {
   public cols: number = 10;
   public rows: number = 20;
+  private offset: number = 0
   public grid: HTMLElement;
   public map: number[][];
   public queue: Point[] = [];
 
-  constructor(el: string, cols = 10, rows = 20) {
+  constructor(el: string, cols = 10, rows = 20, offset = 0) {
     super();
     this.cols = cols;
     this.rows = rows;
+    this.offset = offset;
     this.grid = document.getElementById(el) as HTMLElement;
 
     this.map = (new Array(this.rows))
@@ -22,7 +24,7 @@ export class Grid extends EventTarget {
 
   private createDom() {
     this.grid.innerHTML = '';
-    for (let i = 0; i < this.rows; i++) {
+    for (let i = this.offset; i < this.rows; i++) {
       const row = document.createElement('div');
       row.classList.add('row');
 

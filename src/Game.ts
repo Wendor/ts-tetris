@@ -5,25 +5,29 @@ import { GameInput } from './GameInput';
 import { SevenBag } from './generators/SevenBag';
 import { Glass } from './Glass';
 import { Tetramino } from './Tetramino';
+import { levelSpeed, linesToLevel, scoresForLine } from './Leveling';
 
 export class Game {
   private callbackParams: Record<string, string>;
-  private glass = new Glass('grid');
+  private glass = new Glass('grid', 10, 22, 1);
   private hint = new Grid('hint', 4, 4);
-  private speed = 500;
   private shape: Shape;
   private hintShape: Tetramino;
   private lastTickTime = 0;
   private resetTickTime = false;
+  private forceTick = false;
   private statusDiv: HTMLElement | null | undefined;
   private scoreDiv: HTMLElement | null | undefined;
   private linesDiv: HTMLElement | null | undefined;
   private score = 0;
+  private totalLines = 0;
   private lines = 0;
-  public gameOver = false;
-  public isPaused = false;
-  public tetraminoQueue: number[][][] = [];
-  public generator = new SevenBag();
+  private level = 0;
+  private speed = levelSpeed(0);
+  private gameOver = false;
+  private isPaused = false;
+  private tetraminoQueue: number[][][] = [];
+  private generator = new SevenBag();
 
   constructor(callbackParams = {}) {
     this.callbackParams = callbackParams;
@@ -58,7 +62,9 @@ export class Game {
   private onRotate() {
     if (this.gameOver || this.isPaused) return;
     this.shape.rotate();
-    this.resetTickTime = true;
+    if (this.shape.canMove({ x: 0, y: 1})) {
+      this.resetTickTime = true;
+    }
   }
 
   private onMoveLeft() {
@@ -73,14 +79,23 @@ export class Game {
 
   private onMoveDown() {
     if (this.gameOver || this.isPaused) return;
+    /*
+    if (this.shape.canMove({ x: 0, y: 1})) {
+      this.resetTickTime = true;
+    } else {
+      this.forceTick = true;
+    }
+    */
+    this.forceTick = true;
     this.shape.moveDown();
-    this.resetTickTime = true;
   }
 
   private onTooglePause() {
     if (this.gameOver) {
+      this.totalLines = 0;
       this.lines = 0;
       this.score = 0;
+      this.level = 0;
       this.glass = new Glass('grid');
       this.newTetramino();
       this.gameOver = false;
@@ -98,12 +113,12 @@ export class Game {
 
   private onGameOver() {
     this.gameOver = true;
-    if (!this.callbackParams.callback_url) return;
     this.sendScores();
   }
 
   private sendScores() {
     const { callback_url, ...params } = this.callbackParams;
+    if (!callback_url) return;
 
     fetch(callback_url, {
       method: 'POST',
@@ -119,12 +134,16 @@ export class Game {
   }
 
   private onScore(e: CustomEvent<number>) {
-    if (e.detail == 1) this.score += 100;
-    if (e.detail == 2) this.score += 300;
-    if (e.detail == 3) this.score += 700;
-    if (e.detail == 4) this.score += 1500;
+    const lines: number = e.detail;
+    this.score += scoresForLine(lines, this.level);
+    this.lines += lines;
+    this.totalLines += lines;
 
-    this.lines += e.detail;
+    if (this.lines >= linesToLevel(this.level)) {
+      this.level += 1;
+      this.lines = 0;
+      this.speed = levelSpeed(this.level);
+    }
   }
 
   private newTetramino() {
@@ -165,7 +184,8 @@ export class Game {
       this.lastTickTime = timestamp;
       this.resetTickTime = false;
     }
-    if (timestamp - this.lastTickTime > this.speed) {
+    const speed = this.forceTick ? levelSpeed(10) : this.speed;
+    if (timestamp - this.lastTickTime > speed) {
       this.lastTickTime = timestamp;
       this.tick();
     }
@@ -188,7 +208,7 @@ export class Game {
       this.hint.grid.classList.remove('paused');
     }
     this.scoreDiv!.innerHTML = `Score: ${this.score}`;
-    this.linesDiv!.innerHTML = `Lines: ${this.lines}`;
+    this.linesDiv!.innerHTML = `Level: ${this.level}, Lines: ${this.totalLines}, Speed: ${this.speed.toFixed(3)}`;
     if (this.gameOver) {
       this.statusDiv!.innerHTML = 'game over';
       return;

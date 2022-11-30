@@ -5,20 +5,24 @@ import { GameInput } from './GameInput.js';
 import { SevenBag } from './generators/SevenBag.js';
 import { Glass } from './Glass.js';
 import { Tetramino } from './Tetramino.js';
+import { levelSpeed, linesToLevel, scoresForLine } from './Leveling.js';
 export class Game {
     callbackParams;
-    glass = new Glass('grid');
+    glass = new Glass('grid', 10, 22, 1);
     hint = new Grid('hint', 4, 4);
-    speed = 500;
     shape;
     hintShape;
     lastTickTime = 0;
     resetTickTime = false;
+    forceTick = false;
     statusDiv;
     scoreDiv;
     linesDiv;
     score = 0;
+    totalLines = 0;
     lines = 0;
+    level = 0;
+    speed = levelSpeed(0);
     gameOver = false;
     isPaused = false;
     tetraminoQueue = [];
@@ -50,7 +54,9 @@ export class Game {
         if (this.gameOver || this.isPaused)
             return;
         this.shape.rotate();
-        this.resetTickTime = true;
+        if (this.shape.canMove({ x: 0, y: 1 })) {
+            this.resetTickTime = true;
+        }
     }
     onMoveLeft() {
         if (this.gameOver || this.isPaused)
@@ -65,13 +71,22 @@ export class Game {
     onMoveDown() {
         if (this.gameOver || this.isPaused)
             return;
+        /*
+        if (this.shape.canMove({ x: 0, y: 1})) {
+          this.resetTickTime = true;
+        } else {
+          this.forceTick = true;
+        }
+        */
+        this.forceTick = true;
         this.shape.moveDown();
-        this.resetTickTime = true;
     }
     onTooglePause() {
         if (this.gameOver) {
+            this.totalLines = 0;
             this.lines = 0;
             this.score = 0;
+            this.level = 0;
             this.glass = new Glass('grid');
             this.newTetramino();
             this.gameOver = false;
@@ -89,12 +104,12 @@ export class Game {
     }
     onGameOver() {
         this.gameOver = true;
-        if (!this.callbackParams.callback_url)
-            return;
         this.sendScores();
     }
     sendScores() {
         const { callback_url, ...params } = this.callbackParams;
+        if (!callback_url)
+            return;
         fetch(callback_url, {
             method: 'POST',
             headers: {
@@ -108,15 +123,15 @@ export class Game {
         });
     }
     onScore(e) {
-        if (e.detail == 1)
-            this.score += 100;
-        if (e.detail == 2)
-            this.score += 300;
-        if (e.detail == 3)
-            this.score += 700;
-        if (e.detail == 4)
-            this.score += 1500;
-        this.lines += e.detail;
+        const lines = e.detail;
+        this.score += scoresForLine(lines, this.level);
+        this.lines += lines;
+        this.totalLines += lines;
+        if (this.lines >= linesToLevel(this.level)) {
+            this.level += 1;
+            this.lines = 0;
+            this.speed = levelSpeed(this.level);
+        }
     }
     newTetramino() {
         const tetramino = this.tetraminoQueue.shift();
@@ -152,7 +167,8 @@ export class Game {
             this.lastTickTime = timestamp;
             this.resetTickTime = false;
         }
-        if (timestamp - this.lastTickTime > this.speed) {
+        const speed = this.forceTick ? levelSpeed(10) : this.speed;
+        if (timestamp - this.lastTickTime > speed) {
             this.lastTickTime = timestamp;
             this.tick();
         }
@@ -173,7 +189,7 @@ export class Game {
             this.hint.grid.classList.remove('paused');
         }
         this.scoreDiv.innerHTML = `Score: ${this.score}`;
-        this.linesDiv.innerHTML = `Lines: ${this.lines}`;
+        this.linesDiv.innerHTML = `Level: ${this.level}, Lines: ${this.totalLines}, Speed: ${this.speed.toFixed(3)}`;
         if (this.gameOver) {
             this.statusDiv.innerHTML = 'game over';
             return;
