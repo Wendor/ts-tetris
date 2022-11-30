@@ -93,11 +93,16 @@ export class Game {
   private onPause() {
     if (this.gameOver) return;
     this.isPaused = true;
+    this.sendScores();
   }
 
   private onGameOver() {
     this.gameOver = true;
     if (!this.callbackParams.callback_url) return;
+    this.sendScores();
+  }
+
+  private sendScores() {
     const { callback_url, ...params } = this.callbackParams;
 
     fetch(callback_url, {
