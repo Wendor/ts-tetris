@@ -6,6 +6,7 @@ import { SevenBag } from './generators/SevenBag.js';
 import { Glass } from './Glass.js';
 import { Tetramino } from './Tetramino.js';
 export class Game {
+    callbackParams;
     glass = new Glass('grid');
     hint = new Grid('hint', 4, 4);
     speed = 500;
@@ -22,7 +23,8 @@ export class Game {
     isPaused = false;
     tetraminoQueue = [];
     generator = new SevenBag();
-    constructor() {
+    constructor(callbackParams = {}) {
+        this.callbackParams = callbackParams;
         this.shape = new Shape(this.glass, this.generator.get());
         this.tetraminoQueue = (new Array(4))
             .fill([])
@@ -84,6 +86,23 @@ export class Game {
             return;
         this.isPaused = true;
     }
+    onGameOver() {
+        this.gameOver = true;
+        if (!this.callbackParams.callback_url)
+            return;
+        const { callback_url, ...params } = this.callbackParams;
+        fetch(callback_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...params,
+                score: this.score,
+            }),
+        });
+    }
     onScore(e) {
         if (e.detail == 1)
             this.score += 100;
@@ -116,7 +135,7 @@ export class Game {
         if (!this.shape.canMove({ x: 0, y: 1 })) {
             this.newTetramino();
             if (!this.shape.canMove({ x: 0, y: 0 })) {
-                this.gameOver = true;
+                this.onGameOver();
             }
             this.shape.draw();
             this.hintShape.draw();
@@ -162,5 +181,13 @@ export class Game {
         this.statusDiv.innerHTML = 'playing';
     }
 }
-let game = new Game();
+const urlParams = new URLSearchParams(window.location.search);
+const callbackParams = {};
+const paramsKeys = ['callback_url', 'chat_id', 'message_id', 'inline_message_id', 'user_id'];
+for (const key of paramsKeys) {
+    if (urlParams.get(key)) {
+        callbackParams[key] = urlParams.get(key);
+    }
+}
+let game = new Game(callbackParams);
 //# sourceMappingURL=Game.js.map

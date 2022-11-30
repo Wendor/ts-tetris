@@ -1,0 +1,1 @@
+{"version":3,"file":"CallbackParams.js","sourceRoot":"","sources":["../../src/types/CallbackParams.ts"],"names":[],"mappings":"","sourcesContent":["export interface CallbackParams {\n  callback_url?: string;\n  chat_id?: number;\n  message_id?: number;\n  inline_message_id?: string;\n}"]}

@@ -7,6 +7,7 @@ import { Glass } from './Glass';
 import { Tetramino } from './Tetramino';
 
 export class Game {
+  private callbackParams: Record<string, string>;
   private glass = new Glass('grid');
   private hint = new Grid('hint', 4, 4);
   private speed = 500;
@@ -24,7 +25,8 @@ export class Game {
   public tetraminoQueue: number[][][] = [];
   public generator = new SevenBag();
 
-  constructor() {
+  constructor(callbackParams = {}) {
+    this.callbackParams = callbackParams;
     this.shape = new Shape(this.glass, this.generator.get());
     this.tetraminoQueue = (new Array(4))
       .fill([])
@@ -93,6 +95,24 @@ export class Game {
     this.isPaused = true;
   }
 
+  private onGameOver() {
+    this.gameOver = true;
+    if (!this.callbackParams.callback_url) return;
+    const { callback_url, ...params } = this.callbackParams;
+
+    fetch(callback_url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...params,
+        score: this.score,
+      }),
+    });
+  }
+
   private onScore(e: CustomEvent<number>) {
     if (e.detail == 1) this.score += 100;
     if (e.detail == 2) this.score += 300;
@@ -126,7 +146,7 @@ export class Game {
     if (!this.shape.canMove({ x: 0, y: 1})) {
       this.newTetramino();
       if (!this.shape.canMove({ x: 0, y: 0})) {
-        this.gameOver = true;
+        this.onGameOver();
       }
       this.shape.draw();
       this.hintShape.draw();
@@ -176,4 +196,14 @@ export class Game {
   }
 }
 
-let game = new Game();
+const urlParams = new URLSearchParams(window.location.search);
+const callbackParams: Record<string, string> = {};
+const paramsKeys = ['callback_url', 'chat_id', 'message_id', 'inline_message_id', 'user_id'];
+
+for(const key of paramsKeys) {
+  if (urlParams.get(key)) {
+    callbackParams[key] = urlParams.get(key) as string;
+  }
+}
+
+let game = new Game(callbackParams);
