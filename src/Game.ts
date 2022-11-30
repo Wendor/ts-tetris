@@ -184,11 +184,13 @@ export class Game {
       this.lastTickTime = timestamp;
       this.resetTickTime = false;
     }
-    const speed = this.forceTick ? levelSpeed(10) : this.speed;
-    if (timestamp - this.lastTickTime > speed) {
+
+    if (this.forceTick || timestamp - this.lastTickTime > this.speed) {
+      this.forceTick = false
       this.lastTickTime = timestamp;
       this.tick();
     }
+
     this.shape.draw();
     this.hintShape.draw();
 
