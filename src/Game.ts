@@ -103,6 +103,9 @@ export class Game {
       return;
     };
     this.isPaused = !this.isPaused;
+    if (this.isPaused) {
+      this.sendScores();
+    }
   }
 
   private onPause() {

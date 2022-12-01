@@ -95,6 +95,9 @@ export class Game {
         }
         ;
         this.isPaused = !this.isPaused;
+        if (this.isPaused) {
+            this.sendScores();
+        }
     }
     onPause() {
         if (this.gameOver)
