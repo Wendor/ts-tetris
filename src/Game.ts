@@ -97,11 +97,12 @@ export class Game {
       this.score = 0;
       this.level = 0;
       this.glass = new Glass('grid');
+      this.glass.addEventListener('score', (e: any) => this.onScore(e));
       this.newTetramino();
       this.gameOver = false;
       this.isPaused = false;
       return;
-    };
+    }
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
       this.sendScores();
