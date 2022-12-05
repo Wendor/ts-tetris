@@ -10,6 +10,7 @@ export class GameInput extends EventTarget {
         'moveDown',
         'tooglePause',
         'pause',
+        'newGame',
     ];
     constructor() {
         super();

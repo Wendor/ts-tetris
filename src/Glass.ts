@@ -43,16 +43,23 @@ export class Glass extends Grid {
 
   public hideLines() {
     let hidedLines = 0;
+    let map: number[][] | undefined;
     for (let y in this.map) {
       const row = this.map[y];
       const walls = row.filter((c) => c == CellType.wall).length;
       if (row.length == walls) {
+        if (!map) map = this.map.map((row) => [...row]);
         hidedLines += 1;
         this.moveDown(parseInt(y));
       }
     }
     if (hidedLines) {
-      this.dispatchEvent(new CustomEvent('score', { detail: hidedLines }), );
+      this.dispatchEvent(new CustomEvent('score', {
+        detail: {
+          lines: hidedLines,
+          map,
+        },
+      }));
     }
   }
 

@@ -1,0 +1,1 @@
+{"version":3,"file":"HistoryRecord.js","sourceRoot":"","sources":["../../src/types/HistoryRecord.ts"],"names":[],"mappings":"","sourcesContent":["export interface HistoryRecord {\n  time: number;\n  lines: number;\n  map: number[][];\n  score: number;\n  level: number;\n  speed: number;\n}"]}
