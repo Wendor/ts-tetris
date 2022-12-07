@@ -15,6 +15,7 @@ export class TouchInput extends EventTarget {
   }
 
   private touchStart(e: TouchEvent) {
+    e.preventDefault();
     this.ignoreCurrent = false;
     this.timeout = setTimeout(() => {
       if (!this.isMoving) {
@@ -32,6 +33,7 @@ export class TouchInput extends EventTarget {
   }
 
   private touchEnd(e: TouchEvent) {
+    e.preventDefault();
     clearTimeout(this.timeout);
     if (this.ignoreCurrent) return;
     if (!this.isMoving) {
@@ -41,10 +43,12 @@ export class TouchInput extends EventTarget {
   }
 
   private touchCancel(e: TouchEvent) {
+    e.preventDefault();
     clearTimeout(this.timeout);
   }
 
   private touchMove(e: TouchEvent) {
+    e.preventDefault();
     if (this.ignoreCurrent) return;
 
     const touchendX = e.changedTouches[0].screenX;
